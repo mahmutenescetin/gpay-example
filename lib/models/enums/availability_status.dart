@@ -1,0 +1,1 @@
+enum AvailabilityStatus { inStock, outOfStock,discontinued, lowStock }
