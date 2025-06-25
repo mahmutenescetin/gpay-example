@@ -5,6 +5,7 @@ import '../home_view/home_view.dart';
 import '../home_view/home_view_model.dart';
 import '../profile_view/profile_view.dart';
 import '../transaction_view/transaction_view.dart';
+import 'dashboard_view_model.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -14,9 +15,6 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
-  int _currentIndex = 0;
-  bool _isDataLoaded = false;
-
   final List<Widget> _screens = [
     const HomeView(),
     const ProfileView(),
@@ -27,45 +25,40 @@ class _DashboardViewState extends State<DashboardView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadDataOnce();
-    });
-  }
-
-  void _loadDataOnce() {
-    if (!_isDataLoaded) {
+      final dashboardViewModel = context.read<DashboardViewModel>();
       final homeViewModel = context.read<HomeViewModel>();
-      homeViewModel.getData().then((_) {
-        _isDataLoaded = true;
-      });
-    }
+      dashboardViewModel.loadDataOnce(homeViewModel);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: 'Cüzdan',
+    return Consumer<DashboardViewModel>(
+      builder: (context, dashboardViewModel, child) {
+        return Scaffold(
+          body: _screens[dashboardViewModel.currentIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: dashboardViewModel.currentIndex,
+            onTap: (index) {
+              dashboardViewModel.setCurrentIndex(index);
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance_wallet),
+                label: 'Cüzdan',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_bag),
+                label: 'Ürünler',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.receipt_long),
+                label: 'İşlemler',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Ürünler',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: 'İşlemler',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

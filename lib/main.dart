@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'view/dashboard_view/dashboard_view.dart';
+import 'view/dashboard_view/dashboard_view_model.dart';
 import 'view/home_view/home_view_model.dart';
 import 'view/profile_view/profile_view_model.dart';
 
@@ -10,6 +11,7 @@ void main() {
       providers: [
         ChangeNotifierProvider.value(value: HomeViewModel.instance),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => DashboardViewModel()),
       ],
       child: const MyApp(),
     ),
